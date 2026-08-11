@@ -1,191 +1,158 @@
 # G2 Recall
 
-G2 Recall is a lightweight offline flashcard app for spaced repetition. It is a static web app: no build step, no server, no account, and no external dependencies.
+G2 Recall is a local spaced-repetition flashcard app built for **Even G2**. It puts the review loop on the glasses: choose a range, reveal the answer, grade the card, and move on without reaching for a phone.
 
-It is inspired by mature SRS workflows, including Anki-style review habits, but it is not affiliated with Anki, AnkiWeb, or Ankitects.
+The Even Hub app is the primary product in [`evenhub/`](evenhub/). The repository also contains an optional browser prototype for inspecting, editing, and converting card data.
+
+> G2 Recall is an independent open-source project. It is not affiliated with Anki, AnkiWeb, or Ankitects.
+
+## Screenshots
+
+### Even G2 display
+
+The G2 images below were captured from the official Even Hub simulator and use the same 576x288 display layout as the packaged app.
+
+| Choose a range | Question | Answer and grades |
+| --- | --- | --- |
+| ![G2 range menu](docs/screenshots/g2-menu.jpg) | ![G2 question](docs/screenshots/g2-question.jpg) | ![G2 answer](docs/screenshots/g2-answer.jpg) |
+
+### Phone controller
+
+The phone-side Even Hub page is used to import `.apkg` files and choose the file or deck to review.
+
+![G2 Recall phone controller](docs/screenshots/phone-controller.jpg)
 
 ## Features
 
-- Decks and `Parent::Child`-style deck names
-- Basic, reverse, and cloze notes
-- Tags, colored flags, suspension, and bury-until-tomorrow
-- SM-2-style scheduling with learning, relearning, and review states
-- Again / Hard / Good / Easy grading
-- Automatic sibling burying
-- Daily new and review limits
-- Rollover hour setting
-- Browser/search view with `tag:`, `deck:`, `is:`, `flag:`, and `model:` filters
-- Stats, due forecast, state breakdown, and review heatmap
-- JSON backup/restore
-- TSV import/export
-- Anki `.apkg` import/export for common Basic, reversed Basic, and Cloze decks
-- Local image and audio attachments
-- Keyboard shortcuts for review
+### Even G2 app
 
-## Run Locally
+- Choose `Today's review`, all cards, an imported file, or an individual deck on G2.
+- Import Anki `.apkg` files from the phone-side controller. Other file types are rejected.
+- Keep multiple imported sources and give them display names on the phone.
+- Japanese and English language selection for the phone controller and G2 UI.
+- Persistent local review state with due time, interval, ease, repetitions, and lapses.
+- Again cards return later in the same session and are scheduled for a 10-minute retry.
+- Compact gesture-based review designed for short sessions.
 
-Open `index.html` directly in a browser, or run a tiny local static server:
+### Optional browser prototype
 
-```bash
-npm start
-```
+The root `index.html` is a separate local browser prototype. It is useful for preparing and inspecting card collections, but it is not required by the G2 app and does not share its local data.
 
-Then open:
+It includes deck browsing, Basic/reversed/Cloze notes, tags, flags, suspension, burying, daily limits, statistics, JSON backup/restore, TSV import/export, and common `.apkg` import/export.
 
-```text
-http://localhost:4173
-```
+## G2 controls
 
-No install step is required.
+| Screen | Gesture | Action |
+| --- | --- | --- |
+| Range menu | Swipe up/down | Choose a range |
+| Range menu | Tap | Start reviewing |
+| Any G2 screen | Double tap | Exit the app |
+| Question | Tap | Show the answer |
+| Question | Swipe up | Return to the previous card |
+| Answer | Tap | Good |
+| Answer | Swipe up | Easy |
+| Answer | Swipe down | Again |
+| Answer | Double tap | Hard |
 
-## GitHub Pages
+The answer screen shows the next interval for each grade so the gesture choice is visible before you commit it.
 
-This repository includes a GitHub Pages workflow at `.github/workflows/pages.yml`.
+## Install a private build
 
-To publish:
+The simplest way to try the packaged app on your own glasses is an Even Hub private build:
 
-1. Create a new GitHub repository.
-2. Push this folder as the repository root.
-3. In GitHub, open `Settings > Pages`.
-4. Set the source to `GitHub Actions`.
-5. Push to `main`.
+1. Open the project in the Even Hub developer portal.
+2. Upload `evenhub/dist/g2-recall.ehpk` as a private build.
+3. In the Even Realities phone app, open `Even Hub > Me > Apps > Private builds`.
+4. Install or update **G2 Recall**, then launch it from the app list.
 
-The app can also be served by any static host because it only needs the committed static files; there is no build step.
+The packaged app runs inside Even Hub. Opening the root GitHub Pages site does not launch the glasses UI.
 
-## Even G2 / Even Hub
+## Local development
 
-The browser app and the Even G2 app are different targets. Even G2 does not render an arbitrary GitHub Pages HTML page directly: an Even Hub plugin must use the Even Hub SDK and be packaged as an `.ehpk` file. The repository includes a small G2 companion plugin in [`evenhub/`](evenhub/).
+### Requirements
 
-The companion is intentionally focused on hands-free review on the glasses. It uses the same card concept and grading flow, but it does not yet sync the browser app's `localStorage`, import `.apkg` files, or expose the full desktop editor. Edit [`evenhub/src/cards.js`](evenhub/src/cards.js) before packaging to put your own short deck on the glasses.
+- Node.js 20 LTS or newer
+- An Even Realities account and the Even Realities phone app
+- Paired Even G2 glasses for hardware testing
+- Developer Mode enabled for QR sideloading
 
-### Test on the simulator
-
-Install Node.js 20 LTS or 22+, then install the official Even Hub tools:
+### Run the Even Hub app
 
 ```bash
-npm install -g @evenrealities/evenhub-cli @evenrealities/evenhub-simulator
 cd evenhub
 npm install
 npm run dev
 ```
 
-In another terminal:
+In another terminal, run the simulator:
 
 ```bash
-evenhub-simulator http://localhost:5173
+npx --yes @evenrealities/evenhub-simulator@latest http://localhost:5173
 ```
 
-The simulator uses the Even G2 576x288 monochrome layout. A tap shows the answer, swipe up grades `Again`, swipe down grades `Easy`, a tap on the answer grades `Good`, and a double tap on the answer grades `Hard`. Double tap on the question exits.
+For a paired G2 on the same network, generate a QR code from the computer's LAN address:
 
-### Test on your own Even G2
+```bash
+npx --yes @evenrealities/evenhub-cli@latest qr --url "http://<YOUR-LAN-IP>:5173"
+```
 
-1. Install and pair the Even Realities App, then update the glasses firmware.
-2. Sign in to the Even Hub developer portal with the same account and enable Developer Mode.
-3. In `evenhub/`, run `npm run dev`.
-4. Find your computer's LAN IP and run `evenhub qr --url "http://<YOUR-LAN-IP>:5173"`.
-5. In the phone app, open `Even Hub > Scan QR` and scan the terminal QR code.
-6. Use the temple gestures described above to review the sample cards.
+Scan the QR code from `Even Hub > Scan QR` in the Even Realities phone app. The phone and computer must be able to reach each other on the local network.
 
-The phone and computer must be on a network that allows the phone to reach the development server. The local QR flow is for development and hot reload; it is not the public Even Hub store submission flow.
-
-### Build a private `.ehpk`
+### Build the packaged app
 
 ```bash
 cd evenhub
+npm run build
 npm run pack
 ```
 
-Upload `evenhub/dist/g2-recall.ehpk` in the Even Hub developer portal under a private build, then install it from the Even Realities App's `Even Hub > Me > Apps > Private builds`. This is the path for testing a packaged build on your own glasses.
+The package is written to `evenhub/dist/g2-recall.ehpk`.
 
-Even Hub documentation: [Quickstart](https://hub.evenrealities.com/docs/get-started/quickstart/index), [Local Testing](https://hub.evenrealities.com/docs/test/local-testing), and [Packaging & Deployment](https://hub.evenrealities.com/docs/ship/packaging).
+## Anki compatibility
 
-## Anki Package Exchange
+The Even G2 app accepts `.apkg` files only. It currently extracts common Basic, reversed Basic, and Cloze cards into a lightweight front/back review model.
 
-Open `入出力` to import an `.apkg` or export the current G2 Recall collection as an `.apkg`. The package adapter runs in the browser and includes the collection SQLite database and local media files.
-
-The supported conversion targets are Basic, Basic (and reversed card), and Cloze note types. Anki scheduling fields, flags, suspension state, tags, and review history are transferred where the G2 Recall data model has an equivalent. Custom note types and complex templates are simplified to front/back/extra fields with an import warning.
-
-## Data And Privacy
-
-All study data is stored in the browser's `localStorage` under `g2-recall-db-v1`.
-
-Important details:
-
-- Data stays on the device unless you export or sync the browser profile yourself.
-- JSON backups include card text and embedded media as data URLs.
-- Do not commit personal backup files or private study data.
-- Browser storage can be cleared by browser cleanup tools, private mode, or site-data reset.
-
-Use `入出力 > JSONを書き出す` regularly if the cards matter.
-
-## Import Format
-
-TSV import accepts either a header row or this column order:
-
-```text
-deck	model	front	back	extra	tags
-```
-
-For cloze cards, use `model` = `cloze` and put the cloze text in `front` or a `text` column:
-
-```text
-Japanese	cloze	東京は{{c1::日本}}の首都です。		geography
-```
-
-Cloze syntax:
-
-```text
-{{c1::answer}}
-{{c1::answer::hint}}
-```
-
-## Search Syntax
-
-Examples:
-
-```text
-tag:exam
-deck:Japanese
-is:due
-is:new
-is:suspended
-is:flagged
-flag:red
-model:cloze
-```
-
-Plain text searches across deck name, note content, tags, template name, and card state.
-
-## Review Shortcuts
-
-- `Space` or `Enter`: show answer
-- `1`: Again
-- `2`: Hard
-- `3`: Good
-- `4`: Easy
-- `B`: bury card
-- `S`: suspend card
-- `F`: cycle flag
-- `E`: edit note
-- `Z`: undo last review
-
-## Development
-
-Run the static checks:
-
-```bash
-npm run check
-```
-
-This checks JavaScript syntax and runs a small startup smoke test in Node.
-
-## Compatibility Notes
-
-G2 Recall covers the core local study workflow, but it is not a full Anki replacement. These are intentionally not implemented:
+Complex custom note types and templates are simplified during import. The following are intentionally not implemented in the Even G2 app:
 
 - AnkiWeb sync
 - Anki add-ons
-- Anki's full template engine and arbitrary custom note types
-- Full FSRS scheduler parity
+- Full custom template rendering
+- Full FSRS or Anki scheduler parity
+- Media rendering on the G2 display
 
-`.apkg` import/export is intended for common Basic, Basic (and reversed card), and Cloze note types. Complex custom templates are converted to the available front/back/extra fields and the app reports a warning. JSON backups remain the complete local backup format, while TSV is useful for simple migration.
+The browser prototype has a broader import/export adapter, but the two apps keep separate local data.
+
+## Data and privacy
+
+G2 review data and imported decks stay in the Even Hub app's local storage on the phone. The browser prototype stores its data in browser `localStorage`. This project does not include a cloud backend or automatic sync.
+
+Do not commit personal `.apkg` files, JSON backups, private study notes, credentials, or `.env` files.
+
+## Project structure
+
+```text
+.
+├── evenhub/              # Primary Even G2 / Even Hub app
+│   ├── app.json          # Even Hub package manifest
+│   ├── src/main.js       # G2 review flow and phone controller
+│   └── src/library.js    # .apkg import and source library handling
+├── docs/screenshots/     # README screenshots from the Even Hub simulator
+├── index.html            # Optional browser prototype
+├── app.js                # Browser prototype logic
+└── LICENSE               # MIT license
+```
+
+## Contributing
+
+Bug reports and improvements are welcome. Please include the target surface (`Even G2`, `Even Hub phone page`, or `browser prototype`), the app/build version, the device/app state, and reproducible steps. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+## License
+
+G2 Recall is released under the [MIT License](LICENSE).
+
+## Even Hub references
+
+- [Even Hub Quickstart](https://hub.evenrealities.com/docs/get-started/quickstart/index)
+- [Even Hub testing modes](https://hub.evenrealities.com/docs/test)
+- [Even Hub SDK](https://www.npmjs.com/package/@evenrealities/even_hub_sdk)
+- [Even Hub starter templates](https://github.com/even-realities/evenhub-templates)

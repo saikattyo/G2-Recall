@@ -1,45 +1,74 @@
-# G2 Recall Even Hub companion
+# G2 Recall Even Hub app
 
-This folder is the Even Hub plugin target for Even G2. It is separate from the full browser app in the repository root because Even G2 plugins use the Even Hub SDK and render fixed 576x288 monochrome containers instead of arbitrary HTML/CSS.
+This directory contains the primary Even Hub plugin for Even G2. The app renders fixed 576x288 monochrome containers through `@evenrealities/even_hub_sdk`; arbitrary browser HTML is used only for the phone-side controller.
 
-The current companion is a hardware smoke-test and quick-review surface:
+## Runtime behavior
 
-- tap on the question: show the answer
-- tap on the answer: grade Good
-- swipe up on the answer: grade Again
-- swipe down on the answer: grade Easy
-- double tap on the answer: grade Hard
-- double tap on the question: exit
+- The phone controller imports Anki `.apkg` files only.
+- Imported sources are stored locally and can be renamed.
+- The G2 range menu selects today's due cards, all cards, an imported source, or a deck.
+- Review state is persisted in Even Hub local storage.
+- Japanese and English are supported.
 
-Cards are defined in `src/cards.js` and review counts are stored in Even Hub local storage. The companion does not yet share the browser app database or import `.apkg` files.
+## G2 controls
 
-## Local development
+| Screen | Gesture | Action |
+| --- | --- | --- |
+| Range menu | Swipe up/down | Choose a range |
+| Range menu | Tap | Start reviewing |
+| Any screen | Double tap | Exit |
+| Question | Tap | Reveal the answer |
+| Question | Swipe up | Previous card |
+| Answer | Tap | Good |
+| Answer | Swipe up | Easy |
+| Answer | Swipe down | Again |
+| Answer | Double tap | Hard |
 
-From this directory:
+## Development
+
+Install dependencies and start Vite:
 
 ```bash
 npm install
 npm run dev
 ```
 
-For the simulator, in another terminal run:
+Run the official simulator in another terminal:
 
 ```bash
-evenhub-simulator http://localhost:5173
+npx --yes @evenrealities/evenhub-simulator@latest http://localhost:5173
 ```
 
-For a paired G2, use the computer's LAN address:
+For local testing on paired glasses, use the computer's LAN address:
 
 ```bash
-evenhub qr --url "http://<YOUR-LAN-IP>:5173"
+npx --yes @evenrealities/evenhub-cli@latest qr --url "http://<YOUR-LAN-IP>:5173"
 ```
 
-Then open `Even Hub > Scan QR` in the Even Realities phone app. Developer Mode must be enabled, and the phone must be able to reach the computer over the local network.
+Then scan the QR code in `Even Hub > Scan QR`. Developer Mode must be enabled, and the phone must be able to reach the computer over the local network.
 
-## Private package
+## Package for Even Hub
 
 ```bash
+npm run build
 npm run pack
 ```
 
-Upload `dist/g2-recall.ehpk` to the Even Hub developer portal as a private build, then install it from `Even Hub > Me > Apps > Private builds` in the phone app.
+This creates `dist/g2-recall.ehpk`. Upload that file as a private build in the Even Hub developer portal, then install it from `Even Hub > Me > Apps > Private builds` in the Even Realities phone app.
+
+## Implementation notes
+
+- `src/main.js` owns the bridge lifecycle, G2 containers, gestures, scheduling, and phone controller.
+- `src/library.js` validates `.apkg` extensions and normalizes common Basic, reversed Basic, and Cloze cards.
+- `src/cards.js` provides the bundled starter deck.
+- Review state and imported libraries are local to the Even Hub app. They are not synced with the browser prototype or AnkiWeb.
+
+## Screenshots
+
+See the repository-level [README](../README.md) for G2 and phone-controller screenshots.
+
+## Official references
+
+- [Even Hub Quickstart](https://hub.evenrealities.com/docs/get-started/quickstart/index)
+- [Even Hub testing modes](https://hub.evenrealities.com/docs/test)
+- [Even Hub SDK](https://www.npmjs.com/package/@evenrealities/even_hub_sdk)

@@ -1,7 +1,7 @@
 {
   "name": "g2-recall",
   "version": "0.1.0",
-  "description": "A lightweight offline spaced-repetition flashcard app that runs in a browser.",
+  "description": "A local spaced-repetition flashcard app for Even G2 with an optional browser prototype.",
   "license": "MIT",
   "private": false,
   "type": "commonjs",
