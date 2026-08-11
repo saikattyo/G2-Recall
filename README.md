@@ -52,6 +52,53 @@ To publish:
 
 The app can also be served by any static host because it only needs the committed static files; there is no build step.
 
+## Even G2 / Even Hub
+
+The browser app and the Even G2 app are different targets. Even G2 does not render an arbitrary GitHub Pages HTML page directly: an Even Hub plugin must use the Even Hub SDK and be packaged as an `.ehpk` file. The repository includes a small G2 companion plugin in [`evenhub/`](evenhub/).
+
+The companion is intentionally focused on hands-free review on the glasses. It uses the same card concept and grading flow, but it does not yet sync the browser app's `localStorage`, import `.apkg` files, or expose the full desktop editor. Edit [`evenhub/src/cards.js`](evenhub/src/cards.js) before packaging to put your own short deck on the glasses.
+
+### Test on the simulator
+
+Install Node.js 20 LTS or 22+, then install the official Even Hub tools:
+
+```bash
+npm install -g @evenrealities/evenhub-cli @evenrealities/evenhub-simulator
+cd evenhub
+npm install
+npm run dev
+```
+
+In another terminal:
+
+```bash
+evenhub-simulator http://localhost:5173
+```
+
+The simulator uses the Even G2 576x288 monochrome layout. A tap shows the answer, swipe up grades `Again`, swipe down grades `Easy`, a tap on the answer grades `Good`, and a double tap on the answer grades `Hard`. Double tap on the question exits.
+
+### Test on your own Even G2
+
+1. Install and pair the Even Realities App, then update the glasses firmware.
+2. Sign in to the Even Hub developer portal with the same account and enable Developer Mode.
+3. In `evenhub/`, run `npm run dev`.
+4. Find your computer's LAN IP and run `evenhub qr --url "http://<YOUR-LAN-IP>:5173"`.
+5. In the phone app, open `Even Hub > Scan QR` and scan the terminal QR code.
+6. Use the temple gestures described above to review the sample cards.
+
+The phone and computer must be on a network that allows the phone to reach the development server. The local QR flow is for development and hot reload; it is not the public Even Hub store submission flow.
+
+### Build a private `.ehpk`
+
+```bash
+cd evenhub
+npm run pack
+```
+
+Upload `evenhub/dist/g2-recall.ehpk` in the Even Hub developer portal under a private build, then install it from the Even Realities App's `Even Hub > Me > Apps > Private builds`. This is the path for testing a packaged build on your own glasses.
+
+Even Hub documentation: [Quickstart](https://hub.evenrealities.com/docs/get-started/quickstart/index), [Local Testing](https://hub.evenrealities.com/docs/test/local-testing), and [Packaging & Deployment](https://hub.evenrealities.com/docs/ship/packaging).
+
 ## Anki Package Exchange
 
 Open `入出力` to import an `.apkg` or export the current G2 Recall collection as an `.apkg`. The package adapter runs in the browser and includes the collection SQLite database and local media files.

@@ -13,3 +13,6 @@ coverage/
 local-data/
 *.local.json
 *.backup.json
+evenhub/node_modules/
+evenhub/dist/
+evenhub/*.ehpk

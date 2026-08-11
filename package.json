@@ -7,7 +7,7 @@
   "type": "commonjs",
   "scripts": {
     "start": "python3 -m http.server 4173",
-    "check": "node --check app.js && node --check apkg.js && node scripts/smoke-test.js"
+    "check": "node --check app.js && node --check apkg.js && node --check evenhub/src/main.js && node scripts/smoke-test.js"
   },
   "keywords": [
     "flashcards",
