@@ -4,7 +4,7 @@ The MIT license in [`LICENSE`](LICENSE) applies to original G2 Recall code and d
 
 ## fflate 0.8.2
 
-Used in `vendor/fflate.umd.js` and `evenhub/public/vendor/fflate.umd.js`.
+Used in `evenhub/public/vendor/fflate.umd.js`.
 
 Copyright (c) 2023 Arjun Barrett
 
@@ -34,7 +34,7 @@ Source: [fflate 0.8.2](https://www.npmjs.com/package/fflate/v/0.8.2)
 
 ## sql.js 1.13.0
 
-Used in `vendor/sql-wasm.js`, `vendor/sql-wasm.wasm`, and the corresponding files under `evenhub/public/vendor/`.
+Used in `evenhub/public/vendor/sql-wasm.js` and `evenhub/public/vendor/sql-wasm.wasm`.
 
 Copyright (c) 2017 sql.js authors (see the upstream `AUTHORS` file)
 

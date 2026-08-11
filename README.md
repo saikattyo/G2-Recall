@@ -6,7 +6,7 @@
 
 G2 Recall is an open-source, local-first spaced-repetition app for Even G2. It puts the review loop on the glasses so you can choose a range, reveal the answer, grade the card, and continue without reaching for a phone.
 
-The Even Hub app is the primary product in [`evenhub/`](evenhub/). The repository also contains an optional browser prototype for inspecting, editing, and converting card data.
+The Even Hub app in [`evenhub/`](evenhub/) is the only supported product in this repository.
 
 > G2 Recall is an independent open-source project. It is not affiliated with Anki, AnkiWeb, or Ankitects.
 
@@ -53,12 +53,6 @@ The phone-side Even Hub page is used to import `.apkg` files and choose the file
 - Again cards return later in the same session and are scheduled for a 10-minute retry.
 - Compact gesture-based review designed for short sessions.
 
-### Optional browser prototype
-
-The root `index.html` is a separate local browser prototype. It is useful for preparing and inspecting card collections, but it is not required by the G2 app and does not share its local data.
-
-It includes deck browsing, Basic/reversed/Cloze notes, tags, flags, suspension, burying, daily limits, statistics, JSON backup/restore, TSV import/export, and common `.apkg` import/export.
-
 ## G2 controls
 
 | Screen | Gesture | Action |
@@ -84,7 +78,7 @@ The simplest way to try the packaged app on your own glasses is an Even Hub priv
 3. In the Even Realities phone app, open `Even Hub > Me > Apps > Private builds`.
 4. Install or update **G2 Recall**, then launch it from the app list.
 
-The packaged app runs inside Even Hub. The optional browser prototype is separate from the glasses build and is not required to use G2 Recall on Even G2.
+The packaged app runs inside Even Hub.
 
 ## Local development
 
@@ -99,7 +93,7 @@ The packaged app runs inside Even Hub. The optional browser prototype is separat
 
 ```bash
 cd evenhub
-npm install
+npm ci
 npm run dev
 ```
 
@@ -139,11 +133,9 @@ Complex custom note types and templates are simplified during import. The follow
 - Full FSRS or Anki scheduler parity
 - Media rendering on the G2 display
 
-The browser prototype has a broader import/export adapter, but the two apps keep separate local data.
-
 ## Data and privacy
 
-G2 review data and imported decks stay in the Even Hub app's local storage on the phone. The browser prototype stores its data in browser `localStorage`. This project does not include a cloud backend or automatic sync.
+G2 review data and imported decks stay in the Even Hub app's local storage on the phone. This project does not include a cloud backend or automatic sync.
 
 Do not commit personal `.apkg` files, JSON backups, private study notes, credentials, or `.env` files.
 
@@ -154,16 +146,15 @@ Do not commit personal `.apkg` files, JSON backups, private study notes, credent
 ├── evenhub/              # Primary Even G2 / Even Hub app
 │   ├── app.json          # Even Hub package manifest
 │   ├── src/main.js       # G2 review flow and phone controller
-│   └── src/library.js    # .apkg import and source library handling
+│   ├── src/library.js    # .apkg import and source library handling
+│   └── public/           # Bundled .apkg parser and runtime files
 ├── docs/screenshots/     # README screenshots from the Even Hub simulator
-├── index.html            # Optional browser prototype
-├── app.js                # Browser prototype logic
 └── LICENSE               # MIT license
 ```
 
 ## Contributing
 
-Bug reports and improvements are welcome. Please include the target surface (`Even G2`, `Even Hub phone page`, or `browser prototype`), the app/build version, the device/app state, and reproducible steps. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+Bug reports and improvements are welcome. Please include the target surface (`Even G2` or `Even Hub phone page`), the app/build version, the device/app state, and reproducible steps. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## License
 

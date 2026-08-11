@@ -38,7 +38,7 @@ GitHubリポジトリ自体はPublicですが、Even Hubの一般公開アプリ
 
 ```bash
 cd evenhub
-npm install
+npm ci
 npm run build
 npm run pack
 ```

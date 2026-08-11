@@ -1,6 +1,6 @@
 # Security Policy
 
-G2 Recall is local-first. The Even Hub app stores imported decks and review state in Even Hub local storage on the phone. The optional browser prototype stores its collection in browser `localStorage`. There is no project-operated cloud backend.
+G2 Recall is local-first. The Even Hub app stores imported decks and review state in Even Hub local storage on the phone. There is no project-operated cloud backend.
 
 - Do not import JSON backups from people you do not trust.
 - Backups may contain all card text and embedded media as data URLs.
