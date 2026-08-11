@@ -1,5 +1,7 @@
 # G2 Recall
 
+[日本語版 README](README.ja.md)
+
 > Review Anki flashcards on **Even G2 smart glasses**. Import an `.apkg` deck from your phone, choose what to study, and answer with simple gestures.
 
 G2 Recall is an open-source, local-first spaced-repetition app for Even G2. It puts the review loop on the glasses so you can choose a range, reveal the answer, grade the card, and continue without reaching for a phone.
@@ -20,6 +22,8 @@ The Even Hub app is the primary product in [`evenhub/`](evenhub/). The repositor
 | Current scope | Lightweight Anki import; no AnkiWeb sync or add-ons |
 
 G2 Recall is a focused glasses companion, not a full replacement for the Anki desktop or mobile app. It imports supported `.apkg` decks for review on Even G2 and keeps the review data local.
+
+> Distribution status: the GitHub repository is public, but the Even Hub app is currently distributed as a private build for testing. It is not yet a one-click public Hub listing.
 
 ## Screenshots
 
