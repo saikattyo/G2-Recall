@@ -65,7 +65,7 @@ The simplest way to try the packaged app on your own glasses is an Even Hub priv
 3. In the Even Realities phone app, open `Even Hub > Me > Apps > Private builds`.
 4. Install or update **G2 Recall**, then launch it from the app list.
 
-The packaged app runs inside Even Hub. Opening the root GitHub Pages site does not launch the glasses UI.
+The packaged app runs inside Even Hub. The optional browser prototype is separate from the glasses build and is not required to use G2 Recall on Even G2.
 
 ## Local development
 
