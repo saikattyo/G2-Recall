@@ -1,0 +1,19 @@
+{
+  "name": "g2-recall",
+  "version": "0.1.0",
+  "description": "A lightweight offline spaced-repetition flashcard app that runs in a browser.",
+  "license": "MIT",
+  "private": false,
+  "type": "commonjs",
+  "scripts": {
+    "start": "python3 -m http.server 4173",
+    "check": "node --check app.js && node --check apkg.js && node scripts/smoke-test.js"
+  },
+  "keywords": [
+    "flashcards",
+    "spaced-repetition",
+    "offline",
+    "study",
+    "srs"
+  ]
+}

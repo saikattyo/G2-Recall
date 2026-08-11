@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f7f5ef">
+    <meta name="description" content="A lightweight offline spaced-repetition flashcard app that runs in a browser.">
+    <title>G2 Recall</title>
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <div id="app" class="app-shell">
+      <aside class="sidebar" aria-label="Decks">
+        <div class="brand">
+          <div class="brand-mark">G2</div>
+          <div>
+            <h1>G2 Recall</h1>
+            <p id="storageStatus">local</p>
+          </div>
+        </div>
+
+        <div class="today-strip" id="todayStrip"></div>
+
+        <nav class="deck-list" id="deckList" aria-label="Deck list"></nav>
+
+        <form class="deck-form" id="deckForm">
+          <input id="deckName" name="deckName" type="text" autocomplete="off" placeholder="新しいデッキ">
+          <button type="submit" title="デッキを追加">+</button>
+        </form>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow" id="activeDeckLabel">全デッキ</p>
+            <h2 id="viewTitle">復習</h2>
+          </div>
+          <nav class="tabs" id="tabs" aria-label="Views">
+            <button data-view="review" class="active">復習</button>
+            <button data-view="add">追加</button>
+            <button data-view="browse">検索</button>
+            <button data-view="stats">統計</button>
+            <button data-view="io">入出力</button>
+            <button data-view="settings">設定</button>
+          </nav>
+        </header>
+
+        <section id="content" class="content" aria-live="polite"></section>
+      </main>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="./vendor/fflate.umd.js"></script>
+    <script src="./vendor/sql-wasm.js"></script>
+    <script src="./apkg.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "G2 Recall",
+  "short_name": "G2 Recall",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f7f5ef",
+  "theme_color": "#f7f5ef"
+}
