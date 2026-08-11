@@ -7,13 +7,19 @@ import {
 } from "@evenrealities/even_hub_sdk";
 import { cards as starterCards } from "./cards.js";
 import { libraryCards, normalizeLibrary, parseDeckFile } from "./library.js";
+import {
+  DAY_MS,
+  MINUTE_MS,
+  previewSchedule,
+  reviewForCard,
+  scheduleCard
+} from "./scheduler.js";
 
 const REVIEW_CONTAINER_ID = 1;
 const CONTAINER_NAME = "main";
 const REVIEW_KEY = "g2-recall-even-reviews-v1";
 const LIBRARY_KEY = "g2-recall-even-library-v1";
 const LANGUAGE_KEY = "g2-recall-language-v1";
-const AGAIN_DELAY_MS = 10 * 60 * 1000;
 const MAX_AGAIN_REPEATS = 2;
 
 const COPY = {
@@ -147,7 +153,7 @@ function currentCard() {
 }
 
 function isDue(card, now = Date.now()) {
-  return !reviews[card.id]?.dueAt || reviews[card.id].dueAt <= now;
+  return !reviewForCard(reviews, card).dueAt || reviewForCard(reviews, card).dueAt <= now;
 }
 
 function formatNextDue(timestamp) {
@@ -162,20 +168,16 @@ function formatNextDue(timestamp) {
 
 function nextDue() {
   return allCards
-    .map((card) => reviews[card.id]?.dueAt)
+    .map((card) => reviewForCard(reviews, card).dueAt)
     .filter(Boolean)
     .sort((a, b) => a - b)[0];
 }
 
 function plannedInterval(card, label) {
-  const previous = reviews[card.id] || {};
-  const ease = Math.max(1.3, previous.ease || 2.5);
-  const previousInterval = previous.intervalDays || 0;
-
-  if (label === "again") return `10${t("minutes")}`;
-  if (label === "hard") return `${previousInterval ? Math.max(1, Math.round(previousInterval * 1.2)) : 1}${t("days")}`;
-  if (label === "easy") return `${previousInterval ? Math.max(4, Math.round(previousInterval * ease * 1.3)) : 4}${t("days")}`;
-  return `${previousInterval ? Math.max(1, Math.round(previousInterval * ease)) : 1}${t("days")}`;
+  const next = previewSchedule(reviewForCard(reviews, card), label);
+  const delay = Math.max(MINUTE_MS, next.dueAt - Date.now());
+  if (delay < DAY_MS) return `${Math.max(1, Math.round(delay / MINUTE_MS))}${t("minutes")}`;
+  return `${Math.max(1, Math.round(delay / DAY_MS))}${t("days")}`;
 }
 
 function answerHints(card) {
@@ -198,20 +200,22 @@ function scopeOptionsForLibrary() {
 
   library.forEach((source) => {
     const sourceCards = source.cards || [];
+    const sourceDueCount = sourceCards.filter((card) => isDue(card)).length;
     options.push({
       id: `source:${source.sourceId}`,
-      label: `${displaySourceName(source)} (${sourceCards.length})`,
+      label: `${displaySourceName(source)} (${sourceDueCount}/${sourceCards.length})`,
       cards: sourceCards,
-      dueOnly: false
+      dueOnly: true
     });
 
     [...new Set(sourceCards.map((card) => card.deck))].forEach((deck) => {
       const deckCards = sourceCards.filter((card) => card.deck === deck);
+      const deckDueCount = deckCards.filter((card) => isDue(card)).length;
       options.push({
         id: `deck:${source.sourceId}:${deck}`,
-        label: `${displaySourceName(source)} / ${displayDeckName(deck)} (${deckCards.length})`,
+        label: `${displaySourceName(source)} / ${displayDeckName(deck)} (${deckDueCount}/${deckCards.length})`,
         cards: deckCards,
-        dueOnly: false
+        dueOnly: true
       });
     });
   });
@@ -224,7 +228,13 @@ function startReview(scopeId = selectedScopeId) {
   const scope = selectedScope();
   const candidates = (scope?.cards || [])
     .filter((card) => !scope.dueOnly || isDue(card))
-    .sort((a, b) => (reviews[a.id]?.dueAt || 0) - (reviews[b.id]?.dueAt || 0));
+    .map((card) => ({
+      card,
+      dueAt: reviewForCard(reviews, card).dueAt || 0,
+      fuzz: Math.random() * 5 * MINUTE_MS
+    }))
+    .sort((a, b) => a.dueAt + a.fuzz - (b.dueAt + b.fuzz))
+    .map(({ card }) => card);
 
   mode = "review";
   queue = candidates.map((card) => ({ card, againRepeats: 0 }));
@@ -546,45 +556,16 @@ function initPhoneUi() {
   updatePhoneUi(t("waiting"));
 }
 
-function schedule(card, label) {
-  const previous = reviews[card.id] || {};
-  const ease = Math.max(1.3, previous.ease || 2.5);
-  const previousInterval = previous.intervalDays || 0;
-  let intervalDays;
-  let dueAt;
-  let nextEase = ease;
-
-  if (label === "again") {
-    intervalDays = 0;
-    dueAt = Date.now() + AGAIN_DELAY_MS;
-    nextEase = Math.max(1.3, ease - 0.2);
-  } else if (label === "hard") {
-    intervalDays = previousInterval ? Math.max(1, Math.round(previousInterval * 1.2)) : 1;
-    dueAt = Date.now() + intervalDays * 24 * 60 * 60 * 1000;
-  } else if (label === "easy") {
-    intervalDays = previousInterval ? Math.max(4, Math.round(previousInterval * ease * 1.3)) : 4;
-    dueAt = Date.now() + intervalDays * 24 * 60 * 60 * 1000;
-  } else {
-    intervalDays = previousInterval ? Math.max(1, Math.round(previousInterval * ease)) : 1;
-    dueAt = Date.now() + intervalDays * 24 * 60 * 60 * 1000;
-  }
-
-  return {
-    grade: label,
-    dueAt,
-    intervalDays,
-    ease: nextEase,
-    reps: (previous.reps || 0) + 1,
-    lapses: (previous.lapses || 0) + (label === "again" ? 1 : 0),
-    reviewedAt: Date.now()
-  };
-}
-
 async function grade(label) {
   const item = currentItem();
   if (!item) return;
 
-  reviews[item.card.id] = schedule(item.card, label);
+  const reviewedAt = Date.now();
+  reviews[item.card.id] = {
+    ...scheduleCard(reviewForCard(reviews, item.card), label, reviewedAt),
+    grade: label,
+    reviewedAt
+  };
   await saveReviews();
 
   if (label === "again" && item.againRepeats < MAX_AGAIN_REPEATS) {

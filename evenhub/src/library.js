@@ -36,10 +36,11 @@ function normalizeCard(raw, sourceId, index, fallbackDeck = DEFAULT_DECK) {
   const front = cleanMarkup(model === "cloze" ? clozePrompt(rawFront) : rawFront);
   const clozeBack = cleanMarkup(clozeAnswer(rawFront));
   const back = cleanMarkup(rawBack || clozeBack);
+  const importedSchedule = raw?.schedule || (raw?.state ? raw : null);
 
   if (!front || !back) return null;
 
-  return {
+  const card = {
     id: stableId(sourceId, raw?.id || raw?.cardId || raw?.ankiCardId, index),
     deck: cleanMarkup(raw?.deck || raw?.deckName || fallbackDeck) || DEFAULT_DECK,
     front,
@@ -48,6 +49,21 @@ function normalizeCard(raw, sourceId, index, fallbackDeck = DEFAULT_DECK) {
     sourceName: raw?.sourceName || sourceId,
     model
   };
+
+  if (importedSchedule) {
+    const rawEase = Number(importedSchedule.ease);
+    card.schedule = {
+      state: String(importedSchedule.state || "new"),
+      learningStep: Math.max(0, Number(importedSchedule.learningStep || 0)),
+      dueAt: Math.max(0, Number(importedSchedule.dueAt || importedSchedule.due || Date.now())),
+      intervalDays: Math.max(0, Number(importedSchedule.intervalDays ?? importedSchedule.interval ?? 0)),
+      ease: rawEase > 10 ? rawEase / 100 : rawEase || 2.5,
+      reps: Math.max(0, Number(importedSchedule.reps || 0)),
+      lapses: Math.max(0, Number(importedSchedule.lapses || 0))
+    };
+  }
+
+  return card;
 }
 
 async function parseApkg(file, sourceId) {
@@ -66,7 +82,13 @@ async function parseApkg(file, sourceId) {
       model: note.model,
       deck: decks.get(raw.deckId || note.deckId) || DEFAULT_DECK,
       front: note.fields?.front || note.fields?.text,
-      back: note.fields?.back || note.fields?.extra
+      back: note.fields?.back || note.fields?.extra,
+      state: raw.state,
+      due: raw.due,
+      interval: raw.interval,
+      ease: raw.ease,
+      reps: raw.reps,
+      lapses: raw.lapses
     }, sourceId, index);
   }).filter(Boolean);
 }

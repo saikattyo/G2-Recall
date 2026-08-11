@@ -8,6 +8,9 @@ This directory contains the Even Hub plugin for Even G2. The app renders fixed 5
 - Imported sources are stored locally and can be renamed.
 - The G2 range menu selects today's due cards, all cards, an imported source, or a deck.
 - Review state is persisted in Even Hub local storage.
+- New cards use Anki-style learning steps (`1 minute` -> `10 minutes` -> `1 day`).
+- Correct reviews increase intervals; Again moves cards into a short relearning step.
+- Imported card due dates, intervals, ease, and review counts are used when available.
 - Japanese and English are supported.
 
 ## G2 controls

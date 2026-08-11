@@ -49,8 +49,11 @@ The phone-side Even Hub page is used to import `.apkg` files and choose the file
 - Import Anki `.apkg` files from the phone-side controller. Other file types are rejected.
 - Keep multiple imported sources and give them display names on the phone.
 - Japanese and English language selection for the phone controller and G2 UI.
-- Persistent local review state with due time, interval, ease, repetitions, and lapses.
-- Again cards return later in the same session and are scheduled for a 10-minute retry.
+- Anki-style local scheduling with learning steps, due times, intervals, ease, repetitions, and lapses.
+- New cards use short learning steps (`1 minute` -> `10 minutes`), then graduate to a `1 day` review interval.
+- Correct answers gradually extend the interval; Again sends difficult cards back to a short relearning step.
+- Imported `.apkg` card state, interval, ease, and due date are used as the starting point when available.
+- Due cards are lightly shuffled to avoid always seeing cards in the same order.
 - Compact gesture-based review designed for short sessions.
 
 ## G2 controls
@@ -67,7 +70,7 @@ The phone-side Even Hub page is used to import `.apkg` files and choose the file
 | Answer | Swipe down | Again |
 | Answer | Double tap | Hard |
 
-The answer screen shows the next interval for each grade so the gesture choice is visible before you commit it.
+The answer screen shows the next interval for each grade so the gesture choice is visible before you commit it. Deck and source ranges default to due cards; `All cards` remains available when you intentionally want to study ahead.
 
 ## Install a private build
 
@@ -130,7 +133,7 @@ Complex custom note types and templates are simplified during import. The follow
 - AnkiWeb sync
 - Anki add-ons
 - Full custom template rendering
-- Full FSRS or Anki scheduler parity
+- Full FSRS or Anki scheduler parity (the app uses a lightweight Anki-style scheduler designed for G2)
 - Media rendering on the G2 display
 
 ## Data and privacy
