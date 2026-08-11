@@ -62,6 +62,7 @@ This creates `dist/g2-recall.ehpk`. Upload that file as a private build in the E
 - `src/library.js` validates `.apkg` extensions and normalizes common Basic, reversed Basic, and Cloze cards.
 - `src/cards.js` provides the bundled starter deck.
 - Review state and imported libraries are local to the Even Hub app. They are not synced with the browser prototype or AnkiWeb.
+- Vendored runtime licenses are documented in [the repository's third-party notices](../THIRD_PARTY_NOTICES.md).
 
 ## Screenshots
 

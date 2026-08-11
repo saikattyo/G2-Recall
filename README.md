@@ -148,7 +148,7 @@ Bug reports and improvements are welcome. Please include the target surface (`Ev
 
 ## License
 
-G2 Recall is released under the [MIT License](LICENSE).
+Original G2 Recall code and documentation are released under the [MIT License](LICENSE). Vendored third-party runtimes retain their own licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## Even Hub references
 

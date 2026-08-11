@@ -9,3 +9,6 @@ The upstream license texts are available in the corresponding npm packages:
 
 - https://github.com/101arrowz/fflate/blob/master/LICENSE
 - https://github.com/sql-js/sql.js/blob/master/LICENSE
+
+The version-specific notices included in this repository are collected in
+[`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md).
