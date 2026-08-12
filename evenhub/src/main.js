@@ -587,7 +587,7 @@ async function goPrevious() {
 
 async function exitApp() {
   // 0 exits immediately; 1 opens the host confirmation layer instead.
-  const result = await bridge.shutDownPageContainer(0);
+  const result = await bridge.shutDownPageContainer(1);
   if (result === false) console.warn("G2 Recall could not exit", result);
 }
 
